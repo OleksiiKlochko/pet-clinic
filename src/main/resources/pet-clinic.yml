@@ -28,24 +28,67 @@ paths:
             minItems: 1
             items:
               type: string
+        - name: pageNumber
+          in: query
+          description: Zero-based page index.
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: pageSize
+          in: query
+          description: Page size.
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
       responses:
         200:
           description: Found pets
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
+                $ref: '#/components/schemas/PetPageDto'
 components:
   schemas:
-    Pet:
+    PetPageDto:
+      type: object
+      properties:
+        items:
+          type: array
+          description: Page items.
+          items:
+            $ref: '#/components/schemas/PetDto'
+        pageNumber:
+          type: integer
+          description: Zero-based page index.
+          minimum: 0
+        pageSize:
+          type: integer
+          description: Page size.
+          minimum: 1
+          maximum: 100
+        totalElements:
+          type: integer
+          description: Total number of matching pets.
+          format: int64
+          minimum: 0
+        totalPages:
+          type: integer
+          description: Total number of pages.
+          minimum: 0
+    PetDto:
       type: object
       properties:
         id:
           type: string
+          description: Pet ID.
           format: uuid
           nullable: false
         name:
           type: string
+          description: Pet name.
           nullable: false

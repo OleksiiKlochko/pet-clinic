@@ -2,13 +2,19 @@ package com.example.petclinic.pet;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.openapitools.model.Pet;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+import org.openapitools.model.PetPageDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -17,40 +23,48 @@ public class PetService {
     private final PetMapper petMapper;
 
     /**
-     * Finds a list of pets based on the provided sets of IDs and names.
-     * This method retrieves pet entities from the database, maps them to domain models, and returns them as a list.
+     * Finds a page of pets based on the provided sets of IDs and names.
+     * This method retrieves pet entities from the database, maps them to DTOs, and returns them as a page.
      *
      * @param ids a set of UUIDs representing the IDs of the pets to be fetched; can be null or empty
      * @param names a set of names representing the names of the pets to be fetched; can be null or empty
-     * @return a list of {@code Pet} objects that match the given criteria; if no criteria is provided, all pets are returned
+     * @param pageNumber zero-based page index
+     * @param pageSize page size
+     * @return a page of {@code PetDto} objects that match the given criteria; if no criteria is provided, all pets are returned
      */
     @Transactional(readOnly = true)
-    public List<Pet> findPets(Set<UUID> ids, Set<String> names) {
-        return findPetEntitiesByCriteria(ids, names).stream()
-                .map(petMapper::toPet)
-                .toList();
+    public @NonNull PetPageDto findPets(
+            @Nullable Set<UUID> ids,
+            @Nullable Set<String> names,
+            int pageNumber,
+            int pageSize
+    ) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<PetEntity> page = petRepository.findAll(buildSpecification(ids, names), pageable);
+        return petMapper.mapPage(page);
     }
 
-    private List<PetEntity> findPetEntitiesByCriteria(Set<UUID> ids, Set<String> names) {
-        boolean hasIdFilter = hasFilter(ids);
-        boolean hasNameFilter = hasFilter(names);
-
-        if (hasIdFilter && hasNameFilter) {
-            return petRepository.findByIdInAndNameInIgnoreCase(ids, names);
+    /**
+     * Builds a specification with optional filters for pet IDs and names.
+     */
+    private Specification<PetEntity> buildSpecification(Set<UUID> ids, Set<String> names) {
+        Specification<PetEntity> spec = Specification.where((_, _, builder) -> builder.conjunction());
+        if (CollectionUtils.isNotEmpty(ids)) {
+            spec = spec.and((root, _, _) -> root.get("id").in(ids));
         }
-
-        if (hasIdFilter) {
-            return petRepository.findByIdIn(ids);
+        if (CollectionUtils.isNotEmpty(names)) {
+            spec = spec.and((root, _, builder) -> builder.lower(root.get("name")).in(lowerCase(names)));
         }
+        return spec;
 
-        if (hasNameFilter) {
-            return petRepository.findByNameInIgnoreCase(names);
-        }
-
-        return petRepository.findAll();
     }
 
-    private boolean hasFilter(Set<?> values) {
-        return CollectionUtils.isNotEmpty(values);
+    /**
+     * Normalizes a set of strings to lower case for case-insensitive matching.
+     */
+    private Set<String> lowerCase(Set<String> strings) {
+        return strings.stream()
+                .map(name -> name == null ? null : name.toLowerCase())
+                .collect(Collectors.toSet());
     }
 }
