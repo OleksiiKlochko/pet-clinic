@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: pet-clinic
+  jpa:
+    open-in-view: false

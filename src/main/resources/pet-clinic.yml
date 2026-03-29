@@ -1,0 +1,51 @@
+openapi: 3.1.1
+info:
+  title: Pet Clinic
+  description: Pet clinic
+  version: 0.0.1
+paths:
+  /petclinic/pets:
+    get:
+      summary: Get searched pets.
+      operationId: getPets
+      parameters:
+        - name: ids
+          in: query
+          description: IDs of pets to be searched.
+          schema:
+            type: array
+            uniqueItems: true
+            minItems: 1
+            items:
+              type: string
+              format: uuid
+        - name: names
+          in: query
+          description: Names of pets to be searched.
+          schema:
+            type: array
+            uniqueItems: true
+            minItems: 1
+            items:
+              type: string
+      responses:
+        200:
+          description: Found pets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          nullable: false
+        name:
+          type: string
+          nullable: false
