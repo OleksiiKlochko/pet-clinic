@@ -2,6 +2,8 @@ package com.example.petclinic.pet;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -22,6 +24,8 @@ public class PetEntity {
     private UUID id;
 
     @NotNull
+    @Pattern(regexp = "^\\S(.*\\S)?$")
+    @Size(min = 1, max = 255)
     @Column(name = "name", nullable = false)
     private String name;
 

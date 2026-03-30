@@ -1,13 +1,14 @@
 package com.example.petclinic.pet;
 
 import org.jspecify.annotations.NonNull;
+import org.openapitools.model.PetCreateDto;
 import org.openapitools.model.PetDto;
 import org.openapitools.model.PetPageDto;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 /**
- * Maps pet persistence entities to API DTOs.
+ * Maps between pet API DTOs and persistence entities.
  */
 @Component
 public class PetMapper {
@@ -22,6 +23,18 @@ public class PetMapper {
         return PetDto.builder()
                 .id(petEntity.getId())
                 .name(petEntity.getName())
+                .build();
+    }
+
+    /**
+     * Maps a create request to a persistence entity.
+     *
+     * @param petCreateDto create request DTO
+     * @return persisted pet entity
+     */
+    public @NonNull PetEntity map(@NonNull PetCreateDto petCreateDto) {
+        return PetEntity.builder()
+                .name(petCreateDto.getName())
                 .build();
     }
 

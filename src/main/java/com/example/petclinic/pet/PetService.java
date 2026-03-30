@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.openapitools.model.PetCreateDto;
+import org.openapitools.model.PetDto;
 import org.openapitools.model.PetPageDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +44,18 @@ public class PetService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<PetEntity> page = petRepository.findAll(buildSpecification(ids, names), pageable);
         return petMapper.mapPage(page);
+    }
+
+    /**
+     * Creates a new pet record.
+     *
+     * @param petCreateDto create request DTO
+     * @return created pet DTO
+     */
+    @Transactional
+    public @NonNull PetDto createPet(@NonNull PetCreateDto petCreateDto) {
+        PetEntity saved = petRepository.save(petMapper.map(petCreateDto));
+        return petMapper.map(saved);
     }
 
     /**

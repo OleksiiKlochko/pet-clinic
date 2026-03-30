@@ -52,10 +52,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PetPageDto'
+    post:
+      summary: Create a new pet.
+      operationId: createPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetCreateDto'
+      responses:
+        201:
+          description: Created pet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetDto'
 components:
   schemas:
+    PetCreateDto:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Pet name.
+          minLength: 1
+          maxLength: 255
+          pattern: '^\S(.*\S)?$'
     PetPageDto:
       type: object
+      required:
+        - items
+        - pageNumber
+        - pageSize
+        - totalElements
+        - totalPages
       properties:
         items:
           type: array
@@ -82,13 +115,14 @@ components:
           minimum: 0
     PetDto:
       type: object
+      required:
+        - id
+        - name
       properties:
         id:
           type: string
           description: Pet ID.
           format: uuid
-          nullable: false
         name:
           type: string
           description: Pet name.
-          nullable: false
