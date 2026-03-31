@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 import org.openapitools.model.PetCreateDto;
 import org.openapitools.model.PetDto;
 import org.openapitools.model.PetPageDto;
+import org.openapitools.model.PetUpdateDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -71,6 +72,22 @@ public class PetService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet not found");
         }
         petRepository.deleteById(id);
+    }
+
+    /**
+     * Updates a pet by id.
+     *
+     * @param id pet id
+     * @param petUpdateDto update request DTO
+     * @return updated pet DTO
+     */
+    @Transactional
+    public @NonNull PetDto updatePet(@NonNull UUID id, @NonNull PetUpdateDto petUpdateDto) {
+        PetEntity petEntity = petRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet not found"));
+        petEntity.setName(petUpdateDto.getName());
+        PetEntity saved = petRepository.save(petEntity);
+        return petMapper.map(saved);
     }
 
     /**

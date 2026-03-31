@@ -69,6 +69,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/PetDto'
   /petclinic/pets/{id}:
+    put:
+      summary: Update a pet.
+      operationId: updatePet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pet ID.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetUpdateDto'
+      responses:
+        200:
+          description: Updated pet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetDto'
+        404:
+          description: Pet not found.
     delete:
       summary: Delete a pet.
       operationId: deletePet
@@ -88,6 +114,17 @@ paths:
 components:
   schemas:
     PetCreateDto:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Pet name.
+          minLength: 1
+          maxLength: 255
+          pattern: '^\S(.*\S)?$'
+    PetUpdateDto:
       type: object
       required:
         - name

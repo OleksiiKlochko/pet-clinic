@@ -60,7 +60,7 @@ class PetClinicApiControllerCreateIT {
                 });
     }
 
-    @DisplayName("Creating a new pet with blank name should be rejected.")
+    @DisplayName("Creating a new pet with invalid name should be rejected.")
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {" ", " a", " a ", "a "})
