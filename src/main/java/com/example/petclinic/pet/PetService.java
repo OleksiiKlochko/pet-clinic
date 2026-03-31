@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.util.Set;
 import java.util.UUID;
@@ -59,6 +61,19 @@ public class PetService {
     }
 
     /**
+     * Deletes a pet by id.
+     *
+     * @param id pet id
+     */
+    @Transactional
+    public void deletePet(@NonNull UUID id) {
+        if (!petRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet not found");
+        }
+        petRepository.deleteById(id);
+    }
+
+    /**
      * Builds a specification with optional filters for pet IDs and names.
      */
     private Specification<PetEntity> buildSpecification(Set<UUID> ids, Set<String> names) {
@@ -70,7 +85,6 @@ public class PetService {
             spec = spec.and((root, _, builder) -> builder.lower(root.get("name")).in(lowerCase(names)));
         }
         return spec;
-
     }
 
     /**

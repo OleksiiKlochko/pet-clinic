@@ -42,7 +42,7 @@ class PetClinicApiControllerCreateIT {
                 .uri("/petclinic/pets")
                 .body(
                         PetCreateDto.builder()
-                                .name("Bella")
+                                .name("A")
                                 .build()
                 )
                 .exchange()
@@ -50,13 +50,13 @@ class PetClinicApiControllerCreateIT {
                 .expectBody(PetDto.class).value(petDto -> {
                     assertThat(petDto).isNotNull();
                     assertThat(petDto.getId()).isNotNull();
-                    assertThat(petDto.getName()).isEqualTo("Bella");
+                    assertThat(petDto.getName()).isEqualTo("A");
 
                     List<PetEntity> allPetEntities = petRepository.findAll();
                     assertThat(allPetEntities).hasSize(1);
                     PetEntity petEntity = allPetEntities.getFirst();
                     assertThat(petEntity.getId()).isEqualTo(petDto.getId());
-                    assertThat(petEntity.getName()).isEqualTo("Bella");
+                    assertThat(petEntity.getName()).isEqualTo("A");
                 });
     }
 

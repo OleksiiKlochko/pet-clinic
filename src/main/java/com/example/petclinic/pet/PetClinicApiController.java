@@ -34,4 +34,10 @@ class PetClinicApiController implements PetclinicApi {
         PetDto petDto = petService.createPet(petCreateDto);
         return ResponseEntity.status(201).body(petDto);
     }
+
+    @Override
+    public ResponseEntity<Void> deletePet(@NonNull UUID id) {
+        petService.deletePet(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -63,11 +63,28 @@ paths:
               $ref: '#/components/schemas/PetCreateDto'
       responses:
         201:
-          description: Created pet
+          description: Created pet.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PetDto'
+  /petclinic/pets/{id}:
+    delete:
+      summary: Delete a pet.
+      operationId: deletePet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pet ID.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        204:
+          description: Pet deleted.
+        404:
+          description: Pet not found.
 components:
   schemas:
     PetCreateDto:
