@@ -7,6 +7,7 @@ import org.openapitools.api.PetclinicApi;
 import org.openapitools.model.PetCreateDto;
 import org.openapitools.model.PetDto;
 import org.openapitools.model.PetPageDto;
+import org.openapitools.model.PetPatchDto;
 import org.openapitools.model.PetUpdateDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +46,12 @@ class PetClinicApiController implements PetclinicApi {
     @Override
     public ResponseEntity<PetDto> updatePet(@NonNull UUID id, @NonNull PetUpdateDto petUpdateDto) {
         PetDto petDto = petService.updatePet(id, petUpdateDto);
+        return ResponseEntity.ok(petDto);
+    }
+
+    @Override
+    public ResponseEntity<PetDto> patchPet(@NonNull UUID id, @NonNull PetPatchDto petPatchDto) {
+        PetDto petDto = petService.patchPet(id, petPatchDto);
         return ResponseEntity.ok(petDto);
     }
 }
