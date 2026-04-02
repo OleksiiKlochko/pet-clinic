@@ -7,6 +7,9 @@ import org.openapitools.model.PetPageDto;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+
 /**
  * Maps between pet API DTOs and persistence entities.
  */
@@ -23,6 +26,8 @@ public class PetMapper {
         return PetDto.builder()
                 .id(petEntity.getId())
                 .name(petEntity.getName())
+                .createdAt(OffsetDateTime.ofInstant(petEntity.getCreatedAt(), ZoneOffset.UTC))
+                .lastModifiedAt(OffsetDateTime.ofInstant(petEntity.getLastModifiedAt(), ZoneOffset.UTC))
                 .build();
     }
 

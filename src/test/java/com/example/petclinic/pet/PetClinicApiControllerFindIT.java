@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,13 +24,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(TestcontainersConfiguration.class)
 @AutoConfigureRestTestClient
 @SpringBootTest
-class PetClinicApiControllerIT {
+class PetClinicApiControllerFindIT {
     private static UUID fidoId;
     private static UUID rexId;
     private static UUID miloId;
 
     @Autowired
     private RestTestClient restTestClient;
+    @Autowired
+    private PetRepository petRepository;
 
     @BeforeAll
     static void beforeAll(@Autowired PetRepository petRepository) {
@@ -65,13 +69,21 @@ class PetClinicApiControllerIT {
                 .expectStatus().isOk()
                 .expectBody(PetPageDto.class).value(page -> {
                     assertThat(page).isNotNull();
+
+                    PetEntity fido = petRepository.findById(fidoId).orElseThrow();
+                    PetEntity rex = petRepository.findById(rexId).orElseThrow();
+
                     assertThat(page.getItems()).containsExactlyInAnyOrder(
                             PetDto.builder()
                                     .id(fidoId)
+                                    .createdAt(OffsetDateTime.ofInstant(fido.getCreatedAt(), ZoneOffset.UTC))
+                                    .lastModifiedAt(OffsetDateTime.ofInstant(fido.getLastModifiedAt(), ZoneOffset.UTC))
                                     .name("Fido")
                                     .build(),
                             PetDto.builder()
                                     .id(rexId)
+                                    .createdAt(OffsetDateTime.ofInstant(rex.getCreatedAt(), ZoneOffset.UTC))
+                                    .lastModifiedAt(OffsetDateTime.ofInstant(rex.getLastModifiedAt(), ZoneOffset.UTC))
                                     .name("Rex")
                                     .build()
                     );
@@ -98,13 +110,21 @@ class PetClinicApiControllerIT {
                 .expectStatus().isOk()
                 .expectBody(PetPageDto.class).value(page -> {
                     assertThat(page).isNotNull();
+
+                    PetEntity rex = petRepository.findById(rexId).orElseThrow();
+                    PetEntity milo = petRepository.findById(fidoId).orElseThrow();
+
                     assertThat(page.getItems()).containsExactlyInAnyOrder(
                             PetDto.builder()
                                     .id(rexId)
+                                    .createdAt(OffsetDateTime.ofInstant(rex.getCreatedAt(), ZoneOffset.UTC))
+                                    .lastModifiedAt(OffsetDateTime.ofInstant(rex.getLastModifiedAt(), ZoneOffset.UTC))
                                     .name("Rex")
                                     .build(),
                             PetDto.builder()
                                     .id(miloId)
+                                    .createdAt(OffsetDateTime.ofInstant(milo.getCreatedAt(), ZoneOffset.UTC))
+                                    .lastModifiedAt(OffsetDateTime.ofInstant(milo.getLastModifiedAt(), ZoneOffset.UTC))
                                     .name("Milo")
                                     .build()
                     );

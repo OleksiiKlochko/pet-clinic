@@ -207,6 +207,8 @@ components:
       required:
         - id
         - name
+        - createdAt
+        - lastModifiedAt
       properties:
         id:
           type: string
@@ -215,3 +217,11 @@ components:
         name:
           type: string
           description: Pet name.
+        createdAt:
+          type: string
+          format: date-time
+          description: Pet creation timestamp.
+        lastModifiedAt:
+          type: string
+          format: date-time
+          description: Pet last modification timestamp.

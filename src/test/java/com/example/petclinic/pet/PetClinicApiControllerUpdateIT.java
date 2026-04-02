@@ -15,9 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 @Import(TestcontainersConfiguration.class)
 @AutoConfigureRestTestClient
@@ -57,10 +59,19 @@ class PetClinicApiControllerUpdateIT {
                     assertThat(petDto).isNotNull();
                     assertThat(petDto.getId()).isEqualTo(petEntity.getId());
                     assertThat(petDto.getName()).isEqualTo("Luna");
+                    assertThat(petDto.getCreatedAt()).isNotNull();
+                    assertThat(petDto.getLastModifiedAt()).isNotNull();
+
+                    PetEntity luna = petRepository.findById(petDto.getId())
+                            .orElseThrow(() -> new AssertionError("Pet with id " + petDto.getId() + " not found."));
+
+                    assertThat(luna.getName()).isEqualTo("Luna");
+                    assertThat(luna.getCreatedAt()).isCloseTo(petDto.getCreatedAt().toInstant(), within(1, ChronoUnit.MILLIS));
+                    assertThat(luna.getLastModifiedAt()).isCloseTo(petDto.getLastModifiedAt().toInstant(), within(1, ChronoUnit.MILLIS));
+
                 });
 
-        PetEntity updated = petRepository.findById(petEntity.getId()).orElseThrow();
-        assertThat(updated.getName()).isEqualTo("Luna");
+        assertThat(petRepository.count()).isEqualTo(1);
     }
 
     @DisplayName("Updating a missing pet should return 404.")
@@ -102,7 +113,9 @@ class PetClinicApiControllerUpdateIT {
                 .exchange()
                 .expectStatus().isBadRequest();
 
-        PetEntity persisted = petRepository.findById(petEntity.getId()).orElseThrow();
-        assertThat(persisted.getName()).isEqualTo("Bella");
+        PetEntity bella = petRepository.findById(petEntity.getId())
+                .orElseThrow(() -> new AssertionError("Pet with id " + petEntity.getId() + " not found."));
+        assertThat(bella.getName()).isEqualTo("Bella");
+        assertThat(petRepository.count()).isEqualTo(1);
     }
 }

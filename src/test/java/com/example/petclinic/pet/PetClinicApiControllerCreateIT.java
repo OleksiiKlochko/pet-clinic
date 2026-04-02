@@ -15,9 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
-import java.util.List;
+import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 @Import(TestcontainersConfiguration.class)
 @AutoConfigureRestTestClient
@@ -51,13 +52,19 @@ class PetClinicApiControllerCreateIT {
                     assertThat(petDto).isNotNull();
                     assertThat(petDto.getId()).isNotNull();
                     assertThat(petDto.getName()).isEqualTo("A");
+                    assertThat(petDto.getCreatedAt()).isNotNull();
+                    assertThat(petDto.getLastModifiedAt()).isNotNull();
 
-                    List<PetEntity> allPetEntities = petRepository.findAll();
-                    assertThat(allPetEntities).hasSize(1);
-                    PetEntity petEntity = allPetEntities.getFirst();
-                    assertThat(petEntity.getId()).isEqualTo(petDto.getId());
-                    assertThat(petEntity.getName()).isEqualTo("A");
+                    PetEntity a = petRepository.findById(petDto.getId())
+                            .orElseThrow(() -> new AssertionError("Pet with id " + petDto.getId() + " not found."));
+
+                    assertThat(a.getName()).isEqualTo("A");
+                    assertThat(a.getCreatedAt()).isCloseTo(petDto.getCreatedAt().toInstant(), within(1, ChronoUnit.MILLIS));
+                    assertThat(a.getLastModifiedAt()).isCloseTo(petDto.getLastModifiedAt().toInstant(), within(1, ChronoUnit.MILLIS));
+
                 });
+
+        assertThat(petRepository.count()).isEqualTo(1);
     }
 
     @DisplayName("Creating a new pet with invalid name should be rejected.")

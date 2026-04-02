@@ -6,10 +6,17 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Persistence entity representing a pet record.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,11 +24,22 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "pet")
+@EntityListeners(AuditingEntityListener.class)
 public class PetEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @NotNull
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @NotNull
+    @LastModifiedDate
+    @Column(name = "last_modified_at", nullable = false)
+    private Instant lastModifiedAt;
 
     @NotNull
     @Pattern(regexp = "^\\S(.*\\S)?$")
