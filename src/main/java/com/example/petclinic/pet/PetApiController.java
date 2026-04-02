@@ -3,7 +3,7 @@ package com.example.petclinic.pet;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.openapitools.api.PetclinicApi;
+import org.openapitools.api.PetApi;
 import org.openapitools.model.PetCreateDto;
 import org.openapitools.model.PetDto;
 import org.openapitools.model.PetPageDto;
@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * REST controller implementing pet API operations.
+ */
 @RequiredArgsConstructor
 @RestController
-class PetClinicApiController implements PetclinicApi {
+class PetApiController implements PetApi {
     private final PetService petService;
 
     @Override
@@ -27,8 +30,8 @@ class PetClinicApiController implements PetclinicApi {
             @Nullable Set<UUID> ids,
             @Nullable Set<String> names
     ) {
-            PetPageDto page = petService.findPets(ids, names, pageNumber, pageSize);
-            return ResponseEntity.ok(page);
+        PetPageDto page = petService.findPets(ids, names, pageNumber, pageSize);
+        return ResponseEntity.ok(page);
     }
 
     @Override

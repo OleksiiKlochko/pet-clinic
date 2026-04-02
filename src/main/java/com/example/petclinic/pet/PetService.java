@@ -22,6 +22,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Application service for pet operations.
+ */
 @RequiredArgsConstructor
 @Service
 public class PetService {

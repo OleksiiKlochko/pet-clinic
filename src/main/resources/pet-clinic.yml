@@ -3,10 +3,17 @@ info:
   title: Pet Clinic
   description: Pet clinic
   version: 0.0.1
+tags:
+  - name: pet
+    description: Pet management.
+  - name: vet
+    description: Vet management.
 paths:
   /petclinic/pets:
     get:
       summary: Get searched pets.
+      tags:
+        - pet
       operationId: getPets
       parameters:
         - name: ids
@@ -54,6 +61,8 @@ paths:
                 $ref: '#/components/schemas/PetPageDto'
     post:
       summary: Create a new pet.
+      tags:
+        - pet
       operationId: createPet
       requestBody:
         required: true
@@ -71,6 +80,8 @@ paths:
   /petclinic/pets/{id}:
     patch:
       summary: Patch a pet.
+      tags:
+        - pet
       operationId: patchPet
       parameters:
         - name: id
@@ -97,6 +108,8 @@ paths:
           description: Pet not found.
     put:
       summary: Update a pet.
+      tags:
+        - pet
       operationId: updatePet
       parameters:
         - name: id
@@ -123,6 +136,8 @@ paths:
           description: Pet not found.
     delete:
       summary: Delete a pet.
+      tags:
+        - pet
       operationId: deletePet
       parameters:
         - name: id
@@ -137,6 +152,158 @@ paths:
           description: Pet deleted.
         404:
           description: Pet not found.
+  /petclinic/vets:
+    get:
+      summary: Get searched vets.
+      tags:
+        - vet
+      operationId: getVets
+      parameters:
+        - name: ids
+          in: query
+          description: IDs of vets to be searched.
+          schema:
+            type: array
+            uniqueItems: true
+            minItems: 1
+            items:
+              type: string
+              format: uuid
+        - name: firstNames
+          in: query
+          description: First names of vets to be searched.
+          schema:
+            type: array
+            uniqueItems: true
+            minItems: 1
+            items:
+              type: string
+        - name: lastNames
+          in: query
+          description: Last names of vets to be searched.
+          schema:
+            type: array
+            uniqueItems: true
+            minItems: 1
+            items:
+              type: string
+        - name: pageNumber
+          in: query
+          description: Zero-based page index.
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: pageSize
+          in: query
+          description: Page size.
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        200:
+          description: Found vets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VetPageDto'
+    post:
+      summary: Create a new vet.
+      tags:
+        - vet
+      operationId: createVet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VetCreateDto'
+      responses:
+        201:
+          description: Created vet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VetDto'
+  /petclinic/vets/{id}:
+    patch:
+      summary: Patch a vet.
+      tags:
+        - vet
+      operationId: patchVet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Vet ID.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VetPatchDto'
+      responses:
+        200:
+          description: Patched vet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VetDto'
+        404:
+          description: Vet not found.
+    put:
+      summary: Update a vet.
+      tags:
+        - vet
+      operationId: updateVet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Vet ID.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VetUpdateDto'
+      responses:
+        200:
+          description: Updated vet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VetDto'
+        404:
+          description: Vet not found.
+    delete:
+      summary: Delete a vet.
+      tags:
+        - vet
+      operationId: deleteVet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Vet ID.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        204:
+          description: Vet deleted.
+        404:
+          description: Vet not found.
 components:
   schemas:
     PetCreateDto:
@@ -225,3 +392,113 @@ components:
           type: string
           format: date-time
           description: Pet last modification timestamp.
+    VetCreateDto:
+      type: object
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+          description: Vet first name.
+          minLength: 1
+          maxLength: 255
+          pattern: '^\S(.*\S)?$'
+        lastName:
+          type: string
+          description: Vet last name.
+          minLength: 1
+          maxLength: 255
+          pattern: '^\S(.*\S)?$'
+    VetUpdateDto:
+      type: object
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+          description: Vet first name.
+          minLength: 1
+          maxLength: 255
+          pattern: '^\S(.*\S)?$'
+        lastName:
+          type: string
+          description: Vet last name.
+          minLength: 1
+          maxLength: 255
+          pattern: '^\S(.*\S)?$'
+    VetPatchDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: Vet first name.
+          minLength: 1
+          maxLength: 255
+          pattern: '^\S(.*\S)?$'
+        lastName:
+          type: string
+          description: Vet last name.
+          minLength: 1
+          maxLength: 255
+          pattern: '^\S(.*\S)?$'
+    VetPageDto:
+      type: object
+      required:
+        - items
+        - pageNumber
+        - pageSize
+        - totalElements
+        - totalPages
+      properties:
+        items:
+          type: array
+          description: Page items.
+          items:
+            $ref: '#/components/schemas/VetDto'
+        pageNumber:
+          type: integer
+          description: Zero-based page index.
+          minimum: 0
+        pageSize:
+          type: integer
+          description: Page size.
+          minimum: 1
+          maximum: 100
+        totalElements:
+          type: integer
+          description: Total number of matching vets.
+          format: int64
+          minimum: 0
+        totalPages:
+          type: integer
+          description: Total number of pages.
+          minimum: 0
+    VetDto:
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+        - createdAt
+        - lastModifiedAt
+      properties:
+        id:
+          type: string
+          description: Vet ID.
+          format: uuid
+        firstName:
+          type: string
+          description: Vet first name.
+        lastName:
+          type: string
+          description: Vet last name.
+        createdAt:
+          type: string
+          format: date-time
+          description: Vet creation timestamp.
+        lastModifiedAt:
+          type: string
+          format: date-time
+          description: Vet last modification timestamp.

@@ -180,6 +180,7 @@
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useJakartaEe>true</useJakartaEe>
+                                <useTags>true</useTags>
                                 <generateBuilders>true</generateBuilders>
                             </configOptions>
                         </configuration>

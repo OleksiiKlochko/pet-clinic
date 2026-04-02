@@ -1,4 +1,4 @@
-package com.example.petclinic.pet;
+package com.example.petclinic.vet;
 
 import com.example.petclinic.BaseEntity;
 import jakarta.persistence.Column;
@@ -17,7 +17,7 @@ import org.hibernate.proxy.HibernateProxy;
 import java.util.Objects;
 
 /**
- * Persistence entity representing a pet record.
+ * Persistence entity representing a vet record.
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,14 +25,20 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table(name = "pet")
-public class PetEntity extends BaseEntity {
+@Table(name = "vet")
+public class VetEntity extends BaseEntity {
 
     @NotNull
     @Pattern(regexp = "^\\S(.*\\S)?$")
     @Size(min = 1, max = 255)
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+
+    @NotNull
+    @Pattern(regexp = "^\\S(.*\\S)?$")
+    @Size(min = 1, max = 255)
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
 
     @Override
     public final boolean equals(Object o) {
@@ -51,8 +57,8 @@ public class PetEntity extends BaseEntity {
         if (thisEffectiveClass != oEffectiveClass) {
             return false;
         }
-        PetEntity petEntity = (PetEntity) o;
-        return getId() != null && Objects.equals(getId(), petEntity.getId());
+        VetEntity vetEntity = (VetEntity) o;
+        return getId() != null && Objects.equals(getId(), vetEntity.getId());
     }
 
     @Override
