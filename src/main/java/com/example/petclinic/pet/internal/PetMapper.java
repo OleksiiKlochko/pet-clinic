@@ -1,4 +1,4 @@
-package com.example.petclinic.pet;
+package com.example.petclinic.pet.internal;
 
 import org.jspecify.annotations.NonNull;
 import org.openapitools.model.PetCreateDto;

@@ -1,4 +1,4 @@
-package com.example.petclinic.vet;
+package com.example.petclinic.vet.internal;
 
 import com.example.petclinic.BaseEntity;
 import jakarta.persistence.Column;

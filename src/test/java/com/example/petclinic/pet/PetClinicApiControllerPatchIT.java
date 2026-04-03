@@ -1,6 +1,8 @@
 package com.example.petclinic.pet;
 
 import com.example.petclinic.TestcontainersConfiguration;
+import com.example.petclinic.pet.internal.PetEntity;
+import com.example.petclinic.pet.internal.PetRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.example.petclinic.vet;
+package com.example.petclinic.vet.internal;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;

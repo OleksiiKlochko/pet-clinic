@@ -11,6 +11,7 @@ import org.openapitools.model.VetPatchDto;
 import org.openapitools.model.VetUpdateDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.petclinic.vet.internal.VetService;
 
 import java.util.Set;
 import java.util.UUID;
